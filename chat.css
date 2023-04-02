@@ -104,6 +104,12 @@ button {
   max-width: 100%;
 }
 
+.chat-box .messages .message p a {
+  padding: 0; 
+  margin: auto;
+  max-width: 100%;
+}
+
 .chat-box .messages .message.user {
   align-self: flex-end;
   background: #1b4766;
