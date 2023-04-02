@@ -95,6 +95,7 @@ button {
   gap: 10px;
   background: #262626;
   border-radius: 8px;
+  max-width: 90%;
 }
 
 .chat-box .messages .message p {
