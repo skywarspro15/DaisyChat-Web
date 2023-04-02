@@ -17,6 +17,7 @@ body {
 a {
   color: white; 
   text-decoration: underline;
+  display: inline-block;
 }
 
 ::-webkit-scrollbar {
@@ -89,12 +90,18 @@ button {
 .chat-box .messages .message {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  padding: 10px 16px;
+  align-items: center;
+  padding: 8px 10px;
   gap: 10px;
   background: #262626;
   border-radius: 8px;
 }
+
+.chat-box .messages .message p {
+  padding: 0; 
+  margin: auto;
+}
+
 .chat-box .messages .message.user {
   align-self: flex-end;
   background: #1b4766;

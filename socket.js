@@ -48,7 +48,11 @@ function sendMessage() {
   let inputText = uInput.value;
   inputText = encodeHTML(inputText);
 
-  if (inputText.trim() == "" || typingEnabled == false) {
+  if (inputText.trim() == "") {
+    return;
+  }
+
+  if (typingEnabled == false) {
     return;
   }
 
@@ -56,7 +60,7 @@ function sendMessage() {
 
   let sendBubble = document.createElement("div");
   sendBubble.className = "message user";
-  sendBubble.innerHTML = linkify(decodeHTML(inputText));
+  sendBubble.innerHTML = "<p>" + linkify(decodeHTML(inputText)) + "<\p>";
   messages.appendChild(sendBubble);
 
   objDiv.scrollTop = objDiv.scrollHeight;
@@ -65,6 +69,7 @@ function sendMessage() {
   status.innerHTML = "🤔 Reading the page...";
   messages.appendChild(status);
   objDiv.scrollTop = objDiv.scrollHeight;
+  typingEnabled = false; 
   socket.emit("ground", {
     "site": document.referrer,
     "prompt": inputText,
@@ -123,11 +128,11 @@ socket.on("recv", (data) => {
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
-    respBubble.innerHTML = linkify(decodeHTML(fullData));
+    respBubble.innerHTML = "<p>" + linkify(decodeHTML(fullData)) + "</p>";
     messages.appendChild(respBubble);
     bubbleCreated = true;
   } else {
-    respBubble.innerHTML = linkify(decodeHTML(fullData));
+    respBubble.innerHTML = "<p>" + linkify(decodeHTML(fullData)) + "</p>";
     objDiv.scrollTop = objDiv.scrollHeight;
   }
 });
