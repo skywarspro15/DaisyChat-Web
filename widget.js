@@ -7,7 +7,7 @@
     link.id = cssId;
     link.rel = "stylesheet";
     link.type = "text/css";
-    link.href = "widget.css";
+    link.href = "https://daisychat.netlify.app/widget.css";
     link.media = "all";
     head.appendChild(link);
   }
@@ -46,9 +46,9 @@
     closeButton.id = "daisy-close";
     closeButton.innerHTML = "&times;";
 
-    closeButton.addEventListener("click", function () {
+    closeButton.addEventListener("click", function() {
       popupWindow.classList.add("unloaded");
-      setTimeout(function () {
+      setTimeout(function() {
         popupWindow.style.display = "none";
         document.body.removeChild(popupWindow);
         windowOpen = false;
@@ -58,7 +58,7 @@
     popupWindow.appendChild(closeButton);
 
     var chatIframe = document.createElement("iframe");
-    chatIframe.src = "chat.html";
+    chatIframe.src = "https://DaisyChat-Web.tranch-research.repl.co/chat.html";
     chatIframe.style.width = "100%";
     chatIframe.style.height = "100%";
     chatIframe.style.border = "none";
