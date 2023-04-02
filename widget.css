@@ -26,7 +26,7 @@
 
 #daisy-btn {
   background-color: rgb(245, 227, 83);
-  position: absolute;
+  position: fixed;
   z-index: 100;
   width: 50px;
   height: 50px;
@@ -46,7 +46,7 @@
 
 #daisy-btn.unloaded {
   background-color: rgb(245, 227, 83);
-  position: absolute;
+  position: fixed;
   z-index: 100;
   width: 50px;
   height: 50px;
