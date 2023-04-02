@@ -11,6 +11,24 @@ var socket;
 var uInput = document.getElementById("uInput");
 var objDiv = document.getElementById("messages");
 
+function linkify(inputText) {
+    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    //URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+    //Change email addresses to mailto:: links.
+    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+    return replacedText;
+}
+
 function encodeHTML(html) {
   let encodedStr = html.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
     return "&#" + i.charCodeAt(0) + ";";
@@ -18,6 +36,13 @@ function encodeHTML(html) {
 
   return encodedStr;
 }
+
+function decodeHTML(html) {
+  let txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 
 function sendMessage() {
   let inputText = uInput.value;
@@ -31,7 +56,7 @@ function sendMessage() {
 
   let sendBubble = document.createElement("div");
   sendBubble.className = "message user";
-  sendBubble.innerText = inputText;
+  sendBubble.innerHTML = linkify(decodeHTML(inputText));
   messages.appendChild(sendBubble);
 
   objDiv.scrollTop = objDiv.scrollHeight;
@@ -62,7 +87,7 @@ socket.on("connect", () => {
   socket.emit("ground", {
     "site": document.referrer,
     "prompt":
-      "You're now in a conversation with a user. Greet them and introduce yourself.",
+      "You're now in a conversation with a user. Greet them and introduce the site.",
   });
 });
 
@@ -98,11 +123,11 @@ socket.on("recv", (data) => {
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
-    respBubble.innerText = fullData;
+    respBubble.innerText = decodeHTML(fullData);
     messages.appendChild(respBubble);
     bubbleCreated = true;
   } else {
-    respBubble.innerText = fullData;
+    respBubble.innerText = decodeHTML(fullData);
     objDiv.scrollTop = objDiv.scrollHeight;
   }
 });
