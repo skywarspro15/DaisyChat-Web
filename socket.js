@@ -123,7 +123,7 @@ socket.on("recv", (data) => {
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
-    respBubble.innerText = decodeHTML(fullData);
+    respBubble.innerHTML = linkify(decodeHTML(fullData));
     messages.appendChild(respBubble);
     bubbleCreated = true;
   } else {
