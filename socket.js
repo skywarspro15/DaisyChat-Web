@@ -127,7 +127,7 @@ socket.on("recv", (data) => {
     messages.appendChild(respBubble);
     bubbleCreated = true;
   } else {
-    respBubble.innerText = decodeHTML(fullData);
+    respBubble.innerHTML = linkify(decodeHTML(fullData));
     objDiv.scrollTop = objDiv.scrollHeight;
   }
 });
