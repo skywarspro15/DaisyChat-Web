@@ -101,6 +101,7 @@ button {
 .chat-box .messages .message p {
   padding: 0; 
   margin: auto;
+  max-width: 100%;
 }
 
 .chat-box .messages .message.user {
