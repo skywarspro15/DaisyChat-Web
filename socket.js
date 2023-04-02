@@ -11,8 +11,17 @@ var socket;
 var uInput = document.getElementById("uInput");
 var objDiv = document.getElementById("messages");
 
+function encodeHTML(html) {
+  let encodedStr = html.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+    return "&#" + i.charCodeAt(0) + ";";
+  });
+
+  return encodedStr;
+}
+
 function sendMessage() {
   let inputText = uInput.value;
+  inputText = encodeHTML(inputText);
 
   if (inputText.trim() == "" || typingEnabled == false) {
     return;
@@ -85,7 +94,7 @@ socket.on("error", (err) => {
 socket.on("recv", (data) => {
   console.log(data);
   fullData = fullData + data["data"];
-
+  fullData = encodeHTML(fullData);
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
