@@ -1,0 +1,122 @@
+/* @font-face {
+  font-family: SegoeUIVariable;
+  src: url("fonts/Segoe-UI-Variable-Static-Display.ttf");
+}
+
+@font-face {
+  font-family: SegoeUIVariableBold;
+  src: url("fonts/Segoe-UI-Variable-Static-Display-Bold.ttf");
+}
+
+@font-face {
+  font-family: SegoeUIVariableLight;
+  src: url("fonts/Segoe-UI-Variable-Static-Display-Light.ttf");
+}
+
+@font-face {
+  font-family: SegoeUIVariableSemibold;
+  src: url("fonts/Segoe-UI-Variable-Static-Display-Semibold.ttf");
+}
+
+@font-face {
+  font-family: SegoeUIVariableSemilight;
+  src: url("fonts/Segoe-UI-Variable-Static-Display-Semilight.ttf");
+} */
+/* fonts cause unbearable loading times for me  */
+
+#daisy-btn {
+  background-color: rgb(245, 227, 83);
+  position: absolute;
+  z-index: 100;
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  right: 24px;
+  bottom: 24px;
+  opacity: 1;
+  transition: all 0.5s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+#daisy-btn:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+#daisy-btn.unloaded {
+  background-color: rgb(245, 227, 83);
+  position: absolute;
+  z-index: 100;
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+  border-radius: 10px;
+  right: 24px;
+  bottom: 40px;
+  opacity: 0;
+}
+
+#daisy-close {
+  position: absolute;
+  top: 19px;
+  right: 18px;
+  border-radius: 5px;
+  border: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 23px;
+  width: 24px;
+}
+
+#daisy-chat {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 80%;
+  border-radius: 10px;
+  max-width: 300px;
+  height: 80%;
+  max-height: 400px;
+  z-index: 1000;
+  transition: all 0.5s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+#daisy-chat iframe {
+  border-radius: 8px;
+}
+
+#daisy-chat.unloaded {
+  position: fixed;
+  right: 24px;
+  bottom: 40px;
+  opacity: 0;
+}
+/* 
+@media (min-width: 600px) {
+  #daisy-chat {
+    width: 40%;
+    height: 65%;
+    bottom: 14%;
+  }
+}
+
+@media (min-width: 900px) {
+  #daisy-chat {
+    width: 30%;
+    height: 75%;
+    bottom: 14%;
+  }
+} */
+@media (min-width: 600px) {
+  #daisy-chat {
+    width: 40%;
+  }
+}
+
+@media (min-width: 900px) {
+  #daisy-chat {
+    width: 30%;
+  }
+}

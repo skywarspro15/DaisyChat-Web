@@ -1,0 +1,245 @@
+html,
+body {
+  background-color: #0a0a0a;
+  color: #fff;
+  font-family: "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 10px;
+  transition: all 500ms;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(180, 180, 180);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(150, 150, 150);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Basic root structure */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px;
+  gap: 12px;
+  background: #131313;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+}
+.chat-box .header,
+.chat-box .messages {
+  background: #1a1a1a;
+  border-radius: 8px;
+  width: 100%;
+}
+
+/* Sections */
+.chat-box .header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px;
+  gap: 8px;
+}
+.chat-box .messages {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  gap: 8px;
+  overflow: auto;
+  flex: 1;
+  background-color: transparent;
+}
+.chat-box .input {
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+  gap: 8px;
+  /* idk */
+  min-height: 52px;
+}
+
+/* Nested items */
+.chat-box .messages .message {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 10px;
+  background: #262626;
+  border-radius: 8px;
+}
+.chat-box .messages .message.user {
+  align-self: flex-end;
+  background: #1b4766;
+}
+.chat-box .input textarea {
+  padding: 8px 12px;
+  background-color: #141414;
+  color-scheme: dark;
+  color: #ffffff;
+  outline-color: transparent;
+  font: inherit;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid #242424;
+  margin: 0;
+}
+.chat-box .input button {
+  width: 48px;
+  background: #083758;
+  border: none;
+  outline-color: transparent;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: flex-end;
+  height: 36px;
+  flex-shrink: 0;
+}
+.chat-box button {
+  transition: filter 0.15s ease;
+}
+.chat-box button:hover {
+  filter: brightness(1.15);
+}
+.chat-box button:active,
+.chat-box button:target,
+.chat-box button:focus {
+  filter: brightness(1.35) saturate(1.3);
+}
+.chat-box button:disabled {
+  filter: saturate(0);
+  border: 1px solid #fff1;
+  color: #fff8;
+}
+.messages-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: auto;
+  width: 100%;
+}
+
+/* literally the same exact code */
+.messages-wrapper > .messages {
+  padding-bottom: 64px;
+}
+.messages-wrapper > .input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  width: 100%;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+}
+.messages-wrapper > .input textarea {
+  resize: vertical;
+  flex-shrink: 1;
+  width: 100%;
+  min-height: 36px;
+}
+
+.message {
+  animation-name: zoom-in;
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.status {
+  margin-bottom: 10px;
+  animation-name: zoom-in;
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+@keyframes zoom-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to the .messages element */
+.messages {
+  animation: fade-in 500ms ease-out;
+  -moz-animation: fade-in 500ms ease-out;
+  -webkit-animation: fade-in 500ms ease-out;
+  -ms-animation: fade-in 500ms ease-out;
+  -o-animation: fade-in 500ms ease-out;
+}
