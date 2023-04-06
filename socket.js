@@ -11,22 +11,39 @@ var socket;
 var uInput = document.getElementById("uInput");
 var objDiv = document.getElementById("messages");
 
+function getTime() {
+  let date = new Date();
+  let monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  let month = monthNames[date.getMonth()];
+  let day = date.getDate();
+  let year = date.getFullYear();
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+  let ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  hour = hour ? hour : 12;
+  let formattedDate = `${month} ${day}, ${year}, ${hour}:${minute}${ampm}`;
+  return formattedDate;
+}
+
 function linkify(inputText) {
-    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+  var replacedText, replacePattern1, replacePattern2, replacePattern3;
 
-    //URLs starting with http://, https://, or ftp://
-    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+  //URLs starting with http://, https://, or ftp://
+  replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+  replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
 
-    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+  //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+  replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+  replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
 
-    //Change email addresses to mailto:: links.
-    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+  //Change email addresses to mailto:: links.
+  replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+  replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
 
-    return replacedText;
+  return replacedText;
 }
 
 function encodeHTML(html) {
@@ -66,13 +83,14 @@ function sendMessage() {
   objDiv.scrollTop = objDiv.scrollHeight;
   let status = document.createElement("div");
   status.className = "status";
-  status.innerHTML = "🤔 Reading the page...";
+  status.innerHTML = "🔎 Gathering information...";
   messages.appendChild(status);
   objDiv.scrollTop = objDiv.scrollHeight;
-  typingEnabled = false; 
+  typingEnabled = false;
   socket.emit("ground", {
     "site": document.referrer,
     "prompt": inputText,
+    "time": getTime(), 
   });
 }
 
@@ -87,13 +105,23 @@ socket = io("wss://DaisyGPT-Realtime.tranch-research.repl.co");
 socket.on("connect", () => {
   let status = document.createElement("div");
   status.className = "status";
-  status.innerHTML = "🤔 Reading the page...";
+  status.innerHTML = "🔎 Gathering information...";
   messages.appendChild(status);
-  socket.emit("ground", {
-    "site": document.referrer,
-    "prompt":
-      "You're now in a conversation with a user. Greet them and introduce the site.",
-  });
+  if (document.referrer != "") {
+    socket.emit("ground", {
+      "site": document.referrer,
+      "prompt":
+        "You're now in a conversation with a user. Greet them and introduce the site.",
+      "time": getTime(), 
+    });
+  } else {
+    socket.emit("ground", {
+      "site": document.referrer,
+      "prompt":
+        "You're now in a conversation with a user. Greet them.",
+      "time": getTime(), 
+    });
+  }
 });
 
 socket.on("groundingPrompt", (prompt) => {
