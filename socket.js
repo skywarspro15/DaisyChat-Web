@@ -90,7 +90,7 @@ function sendMessage() {
   socket.emit("ground", {
     "site": document.referrer,
     "prompt": inputText,
-    "time": getTime(), 
+    "time": getTime(),
   });
 }
 
@@ -112,14 +112,14 @@ socket.on("connect", () => {
       "site": document.referrer,
       "prompt":
         "You're now in a conversation with a user. Greet them and introduce the site.",
-      "time": getTime(), 
+      "time": getTime(),
     });
   } else {
     socket.emit("ground", {
       "site": document.referrer,
       "prompt":
         "You're now in a conversation with a user. Greet them.",
-      "time": getTime(), 
+      "time": getTime(),
     });
   }
 });
@@ -152,7 +152,6 @@ socket.on("error", (err) => {
 socket.on("recv", (data) => {
   console.log(data);
   fullData = fullData + data["data"];
-  fullData = encodeHTML(fullData);
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
