@@ -7,7 +7,7 @@
     link.id = cssId;
     link.rel = "stylesheet";
     link.type = "text/css";
-    link.href = "https:?/daisychat.netlify.app/widget.css";
+    link.href = "https://daisy.powerui.tk/widget.css";
     link.media = "all";
     head.appendChild(link);
   }
@@ -58,7 +58,7 @@
     popupWindow.appendChild(closeButton);
 
     var chatIframe = document.createElement("iframe");
-    chatIframe.src = "https:?/daisychat.netlify.app/chat.html";
+    chatIframe.src = "https://daisy.powerui.tk/chat.html";
     chatIframe.style.width = "100%";
     chatIframe.style.height = "100%";
     chatIframe.style.border = "none";
