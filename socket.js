@@ -77,7 +77,7 @@ function sendMessage() {
 
   let sendBubble = document.createElement("div");
   sendBubble.className = "message user";
-  sendBubble.innerHTML = "<p>" + linkify(decodeHTML(inputText)) + "<\p>";
+  sendBubble.innerHTML = "<p>" + linkify(inputText) + "<\p>";
   messages.appendChild(sendBubble);
 
   objDiv.scrollTop = objDiv.scrollHeight;
