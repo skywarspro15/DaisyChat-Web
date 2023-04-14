@@ -155,11 +155,11 @@ socket.on("recv", (data) => {
   if (!bubbleCreated) {
     respBubble = document.createElement("div");
     respBubble.className = "message gpt";
-    respBubble.innerHTML = "<p>" + linkify(decodeHTML(fullData)) + "</p>";
+    respBubble.innerHTML = "<p>" + linkify(fullData) + "</p>";
     messages.appendChild(respBubble);
     bubbleCreated = true;
   } else {
-    respBubble.innerHTML = "<p>" + linkify(decodeHTML(fullData)) + "</p>";
+    respBubble.innerHTML = "<p>" + linkify(fullData) + "</p>";
     objDiv.scrollTop = objDiv.scrollHeight;
   }
 });
