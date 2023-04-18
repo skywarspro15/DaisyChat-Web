@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Daisy-chan</title>
+</head>
+
+<body>
+  <div class="character">
+    <canvas id="charCanvas"></canvas>
+    <p>Hey! This app is still in development. Stay tuned!</p>
+    <div class="inputs">
+      <input type="text" autocomplete="off" id="uInput" />
+      <button>Submit</button>
+    </div>
+  </div>
+  <div id="loadScreen">
+    <h1 class="loadTitle">OwO... What's this?</h1>
+    <p class="loadSubtitle">Loading model...</p>
+    <progress id="progressBar" value="0" max="100"></progress>
+  </div>
+</body>
+
+<script src="character.js" type="module"></script>
+
+</html>
