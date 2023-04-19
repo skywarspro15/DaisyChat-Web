@@ -4,12 +4,14 @@ import { OrbitControls } from "https://unpkg.com/three@0.127.0/examples/jsm/cont
 import { VRMLoaderPlugin, VRMUtils } from "./three-vrm.module.js";
 
 // renderer
-const loadScreen = document.getElementById("loadScreen");
+const loadStatus = document.getElementById("loadStatus");
 const progressBar = document.getElementById("progressBar");
 const canvas = document.getElementById("charCanvas");
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.setSize(480, 240);
+renderer.setSize(window.innerWidth - 20, window.innerHeight - 20);
+
+loadStatus.innerText = "Loading model...";
 
 // camera
 const camera = new THREE.PerspectiveCamera(
@@ -18,7 +20,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   20.0
 );
-camera.position.set(0.0, 1.0, 1.0);
+camera.position.set(0.0, 1.0, 2);
 
 // camera controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -65,12 +67,14 @@ loader.load(
     currentVrm = vrm;
     console.log(vrm);
     scene.add(vrm.scene);
-    loadScreen.style.opacity = 0;
-    loadScreen.style.zIndex = -100;
     currentVrm.humanoid.getNormalizedBoneNode("leftUpperArm").rotation.z = armL;
     currentVrm.humanoid.getNormalizedBoneNode("rightUpperArm").rotation.z =
       armR;
     currentVrm.humanoid.getNormalizedBoneNode("hips").position.set(0, 0.5, 0.0);
+    let gptScript = document.createElement("script");
+    gptScript.setAttribute("src", "ai.js");
+    gptScript.setAttribute("type", "module");
+    document.body.appendChild(gptScript);
     blink();
   },
 
@@ -91,6 +95,7 @@ clock.start();
 
 // set the minimum and maximum time between blinks in milliseconds
 const minTimeBetweenBlinks = 3000;
+
 const maxTimeBetweenBlinks = 5000;
 
 function blink() {
@@ -112,7 +117,7 @@ function blink() {
       Math.random() * (maxTimeBetweenBlinks - minTimeBetweenBlinks) +
       minTimeBetweenBlinks;
     setTimeout(blink, timeUntilNextBlink);
-  }, 500);
+  }, 300);
 }
 
 function animate() {
