@@ -39,6 +39,7 @@ scene.add(light);
 // gltf and vrm
 console.log("3d loader initialized");
 let currentVrm = undefined;
+let currentMixer = undefined;
 let armL = -1;
 let armR = 1;
 const loader = new GLTFLoader();
@@ -47,7 +48,6 @@ loader.crossOrigin = "anonymous";
 loader.register((parser) => {
   return new VRMLoaderPlugin(parser);
 });
-
 
 loader.load(
   // URL of the VRM you want to load
@@ -77,7 +77,8 @@ loader.load(
     gptScript.setAttribute("src", "ai.js");
     gptScript.setAttribute("type", "module");
     document.body.appendChild(gptScript);
-    blink();
+    blink(currentVrm);
+    // waveAnim(currentVrm);
   },
 
   // called while loading is progressing
@@ -100,42 +101,74 @@ const minTimeBetweenBlinks = 3000;
 
 const maxTimeBetweenBlinks = 5000;
 
-function blink() {
+function blink(vrm) {
   // trigger the blink animation on the character
   // this will depend on how you have implemented the character and the blink animation
   console.log("blinked");
 
-  currentVrm.expressionManager.setValue("blinkLeft", 1);
-  currentVrm.expressionManager.setValue("blinkRight", 1);
-  setTimeout(() => {
-    currentVrm.expressionManager.setValue("blinkLeft", 0);
-    currentVrm.expressionManager.setValue("blinkRight", 0);
-  }, 200);
+  if (!currentMixer) {
+    currentMixer = new THREE.AnimationMixer(vrm.scene);
+  }
+  const quatA = new THREE.Quaternion(0.0, 0.0, 0.0, 1.0);
+  const quatB = new THREE.Quaternion(0.0, 0.0, 0.0, 1.0);
+  quatB.setFromEuler(new THREE.Euler(0.0, 0.0, 0.25 * Math.PI));
 
-  currentVrm.update(clock.getDelta());
+  const blinkTrack = new THREE.NumberKeyframeTrack(
+    vrm.expressionManager.getExpressionTrackName("blink"), // name
+    [0.0, 0.2, 0.5], // times
+    [0.0, 1.0, 0.0] // values
+  );
+
+  const clip = new THREE.AnimationClip("Animation", 0.5, [blinkTrack]);
+  const action = currentMixer.clipAction(clip);
+  action.setLoop(THREE.LoopOnce);
+  action.reset().play();
+
   // schedule the next blink at a random time in the future
+  const timeUntilNextBlink =
+    Math.random() * (maxTimeBetweenBlinks - minTimeBetweenBlinks) +
+    minTimeBetweenBlinks;
   setTimeout(() => {
-    const timeUntilNextBlink =
-      Math.random() * (maxTimeBetweenBlinks - minTimeBetweenBlinks) +
-      minTimeBetweenBlinks;
-    setTimeout(blink, timeUntilNextBlink);
-  }, 300);
+    blink(vrm);
+  }, timeUntilNextBlink);
+}
+
+function waveAnim(vrm) {
+  console.log("waving");
+  if (!currentMixer) {
+    currentMixer = new THREE.AnimationMixer(vrm.scene);
+  }
+  const quatA = new THREE.Quaternion(0.0, 0.0, 0.0, 1.0);
+  const quatB = new THREE.Quaternion(0.0, 0.0, 0.0, 1.0);
+  quatB.setFromEuler(new THREE.Euler(0.0, 0.0, 0.25 * Math.PI));
+
+  const armTrack = new THREE.QuaternionKeyframeTrack(
+    vrm.humanoid.getNormalizedBoneNode("leftUpperArm").name + ".quaternion", // name
+    [0.0, 0.5, 1.0], // times
+    [0.0, 1.0, 0.0] // values
+  );
+
+  const clip = new THREE.AnimationClip("Animation", 0.5, [armTrack]);
+  const action = currentMixer.clipAction(clip);
+  action.play();
 }
 
 function animate() {
   requestAnimationFrame(animate);
+  let deltaTime = clock.getDelta();
 
   // update vrm components
   if (currentVrm) {
     const s = Math.sin(Math.PI * clock.elapsedTime);
 
-    currentVrm.humanoid.getNormalizedBoneNode("leftUpperArm").rotation.z = armL;
-    currentVrm.humanoid.getNormalizedBoneNode("rightUpperArm").rotation.z =
-      armR;
     currentVrm.humanoid
       .getNormalizedBoneNode("hips")
       .position.set(0, 0.02 - 0.02 * s + 0.4, 0.0);
-    currentVrm.update(clock.getDelta());
+    currentVrm.update(deltaTime);
+  }
+
+  if (currentMixer) {
+    currentMixer.update(deltaTime);
   }
 
   // render
