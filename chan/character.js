@@ -37,7 +37,7 @@ light.position.set(1.0, 1.0, 1.0).normalize();
 scene.add(light);
 
 // gltf and vrm
-console.log("3d loader initialized");
+console.log("Character initializing");
 let currentVrm = undefined;
 let currentMixer = undefined;
 let armL = -1;
@@ -55,6 +55,7 @@ loader.load(
 
   // called when the resource is loaded
   (gltf) => {
+    console.log("Character initialized");
     const vrm = gltf.userData.vrm;
 
     // calling these functions greatly improves the performance

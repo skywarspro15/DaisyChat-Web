@@ -4,14 +4,74 @@ const loadStatus = document.getElementById("loadStatus");
 const loadScreen = document.getElementById("loadScreen");
 const charResponse = document.getElementById("charResponse");
 const sendButton = document.getElementById("sendButton");
+const enableSpeech = document.getElementById("toggleSpeech");
+const aboutButton = document.getElementById("aboutButton");
 const speech = document.getElementById("speech");
 let messageHistory = [];
 let fullData = "";
 let typingEnabled = false;
 
-console.log("GPT script initialized");
+console.log("Intelligence script initialized");
 loadStatus.innerText = "Connecting...";
 const socket = io("https://daisy-character.tranch-research.repl.co");
+
+async function apiAuthCheck() {
+  let key = localStorage.getItem("xi_key");
+
+  const url = "https://api.elevenlabs.io/v1/user";
+
+  const headers = {
+    "Accept": "application/json",
+    "xi-api-key": key,
+  };
+
+  try {
+    const response = await fetch(url, { headers });
+    if (response.status === 200) {
+      console.log("API key authorized");
+    } else {
+      console.error("API key unauthorized");
+      alert("Unable to enable TTS. Please try again with an another API key.");
+      localStorage.setItem("ttsEnabled", "false");
+      enableSpeech.innerText = "Enable speech";
+    }
+  } catch (error) {
+    alert("Unable to reach TTS.\n" + error);
+  }
+}
+
+async function enableTTS() {
+  if (localStorage.getItem("ttsEnabled") == "true") {
+    localStorage.setItem("ttsEnabled", "false");
+    enableSpeech.innerText = "Enable speech";
+    alert("TTS disabled");
+    return;
+  }
+  let key = prompt(
+    "Due to financial limitations, we're unable to provide our users access to TTS out of the box. Please sign up for an ElevenLabs account and enter in your API key by clicking in your profile image, then Profile."
+  );
+
+  const url = "https://api.elevenlabs.io/v1/user";
+
+  const headers = {
+    "Accept": "application/json",
+    "xi-api-key": key,
+  };
+
+  try {
+    const response = await fetch(url, { headers });
+    if (response.status === 200) {
+      localStorage.setItem("xi_key", key);
+      localStorage.setItem("ttsEnabled", "true");
+      enableSpeech.innerText = "Disable speech";
+      alert("Successfully enabled TTS.");
+    } else {
+      alert("Unable to enable TTS. Please try again with an another API key.");
+    }
+  } catch (error) {
+    alert("Unable to enable TTS.\n" + error);
+  }
+}
 
 function sendMessage() {
   if (!typingEnabled) {
@@ -33,6 +93,21 @@ function sendMessage() {
 sendButton.addEventListener("click", () => {
   sendMessage();
 });
+
+enableSpeech.addEventListener("click", () => {
+  enableTTS();
+});
+
+aboutButton.addEventListener("click", () => {
+  window.location.href = "/about.html";
+});
+
+if (localStorage.getItem("ttsEnabled") == "true") {
+  enableSpeech.innerText = "Disable speech";
+  apiAuthCheck();
+} else {
+  enableSpeech.innerText = "Enable speech";
+}
 
 socket.on("connect", () => {
   console.log("connected to server");
@@ -75,7 +150,12 @@ socket.on("done", () => {
     "type": "custom",
     "content": fullData,
   });
-  socket.emit("say", fullData);
+  if (localStorage.getItem("ttsEnabled") == "true") {
+    socket.emit("say", {
+      "message": fullData,
+      "api_key": localStorage.getItem("xi_key"),
+    });
+  }
   fullData = "";
 });
 
@@ -89,3 +169,9 @@ socket.on("disconnect", () => {
   alert("Connection closed");
   window.location.reload();
 });
+
+setInterval(async () => {
+  if (localStorage.getItem("ttsEnabled") == "true") {
+    await apiAuthCheck();
+  }
+}, 2000);
