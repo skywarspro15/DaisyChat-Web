@@ -37,6 +37,7 @@ light.position.set(1.0, 1.0, 1.0).normalize();
 scene.add(light);
 
 // gltf and vrm
+console.log("3d loader initialized");
 let currentVrm = undefined;
 let armL = -1;
 let armR = 1;
@@ -46,6 +47,7 @@ loader.crossOrigin = "anonymous";
 loader.register((parser) => {
   return new VRMLoaderPlugin(parser);
 });
+
 
 loader.load(
   // URL of the VRM you want to load

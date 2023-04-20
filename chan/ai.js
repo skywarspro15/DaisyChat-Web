@@ -8,20 +8,6 @@ let messageHistory = [];
 let fullData = "";
 let typingEnabled = false;
 
-function encodeHTML(html) {
-  let encodedStr = html.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-    return "&#" + i.charCodeAt(0) + ";";
-  });
-
-  return encodedStr;
-}
-
-function decodeHTML(html) {
-  let txt = document.createElement("textarea");
-  txt.innerHTML = html;
-  return txt.value;
-}
-
 console.log("GPT script initialized");
 loadStatus.innerText = "Connecting...";
 const socket = io("https://daisy-character.tranch-research.repl.co");
@@ -53,10 +39,10 @@ socket.on("connect", () => {
   loadScreen.style.zIndex = -100;
   messageHistory.push({
     "role": "user",
-    "content": "*Someone joins in the conversation*",
+    "content": "*Someone joined in the conversation. Greet them!*",
   });
   socket.emit("begin", {
-    "prompt": "*Someone joins in the conversation*",
+    "prompt": "*Someone joined in the conversation. Greet them!*",
     "context": messageHistory,
   });
 });
@@ -71,7 +57,7 @@ socket.on("error", (err) => {
 
 socket.on("recv", (data) => {
   fullData = fullData + data["data"];
-  charResponse.innerText = decodeHTML(fullData);
+  charResponse.innerText = fullData;
 });
 
 socket.on("done", () => {
@@ -82,4 +68,9 @@ socket.on("done", () => {
     "content": fullData,
   });
   fullData = "";
+});
+
+socket.on("disconnect", () => {
+  alert("Connection closed");
+  window.location.reload();
 });
