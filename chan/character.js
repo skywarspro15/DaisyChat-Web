@@ -78,7 +78,6 @@ loader.load(
     gptScript.setAttribute("type", "module");
     document.body.appendChild(gptScript);
     blink(currentVrm);
-    // waveAnim(currentVrm);
   },
 
   // called while loading is progressing
@@ -142,10 +141,12 @@ function waveAnim(vrm) {
   const quatB = new THREE.Quaternion(0.0, 0.0, 0.0, 1.0);
   quatB.setFromEuler(new THREE.Euler(0.0, 0.0, 0.25 * Math.PI));
 
+  // vrm.getNormalizedBoneNode("leftUppperArm")
+
   const armTrack = new THREE.QuaternionKeyframeTrack(
     vrm.humanoid.getNormalizedBoneNode("leftUpperArm").name + ".quaternion", // name
-    [0.0, 0.5, 1.0], // times
-    [0.0, 1.0, 0.0] // values
+    [0.0, 0.2, 0.5], // times
+    [...quatA.toArray(), ...quatB.toArray(), ...quatA.toArray()] // values
   );
 
   const clip = new THREE.AnimationClip("Animation", 0.5, [armTrack]);
