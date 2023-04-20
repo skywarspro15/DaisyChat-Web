@@ -99,7 +99,7 @@ enableSpeech.addEventListener("click", () => {
 });
 
 aboutButton.addEventListener("click", () => {
-  window.location.href = "/about.html";
+  window.location.href = "/chan/about.html";
 });
 
 if (localStorage.getItem("ttsEnabled") == "true") {
