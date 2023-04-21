@@ -42,6 +42,7 @@ let currentVrm = undefined;
 let currentMixer = undefined;
 let armL = -1;
 let armR = 1;
+let prevProg = 0;
 const loader = new GLTFLoader();
 loader.crossOrigin = "anonymous";
 
@@ -74,10 +75,16 @@ loader.load(
     currentVrm.humanoid.getNormalizedBoneNode("rightUpperArm").rotation.z =
       armR;
     currentVrm.humanoid.getNormalizedBoneNode("hips").position.set(0, 0.5, 0.0);
-    let gptScript = document.createElement("script");
-    gptScript.setAttribute("src", "ai.js");
-    gptScript.setAttribute("type", "module");
-    document.body.appendChild(gptScript);
+    const params = new URLSearchParams(window.location.search);
+    let extScript = document.createElement("script");
+    if (!params.has("r")) {
+      extScript.setAttribute("src", "ai.js");
+      extScript.setAttribute("type", "module");
+    } else {
+      extScript.setAttribute("src", "replay.js");
+      extScript.setAttribute("type", "module");
+    }
+    document.body.appendChild(extScript);
     blink(currentVrm);
   },
 
@@ -85,11 +92,19 @@ loader.load(
   (progress) => {
     let curProgress = 100.0 * (progress.loaded / progress.total);
     console.log("Loading model...", curProgress, "%");
-    progressBar.setAttribute("value", curProgress);
+    anime({
+      targets: "#progressBar",
+      value: [prevProg, curProgress],
+      easing: "easeInOutCubic",
+    });
+    prevProg = curProgress;
   },
 
   // called when loading has errors
-  (error) => console.error(error)
+  (error) => {
+    console.error(error);
+    loadStatus.innerText = error;
+  }
 );
 
 // animate
@@ -98,12 +113,10 @@ clock.start();
 
 // set the minimum and maximum time between blinks in milliseconds
 const minTimeBetweenBlinks = 3000;
-
 const maxTimeBetweenBlinks = 5000;
 
 function blink(vrm) {
   // trigger the blink animation on the character
-  // this will depend on how you have implemented the character and the blink animation
   console.log("blinked");
 
   if (!currentMixer) {

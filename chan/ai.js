@@ -6,9 +6,12 @@ const charResponse = document.getElementById("charResponse");
 const sendButton = document.getElementById("sendButton");
 const enableSpeech = document.getElementById("toggleSpeech");
 const aboutButton = document.getElementById("aboutButton");
+const getReplay = document.getElementById("getReplay");
 const speech = document.getElementById("speech");
+const uInput = document.getElementById("uInput");
 let messageHistory = [];
 let fullData = "";
+let replayURL = "Not available yet";
 let typingEnabled = false;
 
 console.log("Intelligence script initialized");
@@ -90,6 +93,13 @@ function sendMessage() {
   uInput.value = "";
 }
 
+function getReplayURL() {
+  prompt(
+    "Had an interesting conversation? Share it using this URL:",
+    replayURL
+  );
+}
+
 sendButton.addEventListener("click", () => {
   sendMessage();
 });
@@ -100,6 +110,14 @@ enableSpeech.addEventListener("click", () => {
 
 aboutButton.addEventListener("click", () => {
   window.location.href = "/chan/about.html";
+});
+
+getReplay.addEventListener("click", () => {
+  getReplayURL();
+});
+
+uInput.addEventListener("keyup", () => {
+  socket.emit("type", uInput.value);
 });
 
 if (localStorage.getItem("ttsEnabled") == "true") {
@@ -130,12 +148,16 @@ socket.on("connect", () => {
   );
 });
 
+socket.on("replayId", (replayId) => {
+  replayURL = window.location.origin + "/?r=" + replayId;
+});
+
 socket.on("state", (state) => {
   console.log(state);
 });
 
 socket.on("error", (err) => {
-  console.error(err);
+  alert(err);
 });
 
 socket.on("recv", (data) => {
