@@ -149,7 +149,7 @@ socket.on("connect", () => {
 });
 
 socket.on("replayId", (replayId) => {
-  replayURL = window.location.origin + "/?r=" + replayId;
+  replayURL = window.location.origin + "/chan?r=" + replayId;
 });
 
 socket.on("state", (state) => {
