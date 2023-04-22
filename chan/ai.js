@@ -95,7 +95,7 @@ function sendMessage() {
 
 function getReplayURL() {
   prompt(
-    "Had an interesting conversation? Share it using this URL:",
+    "Had an interesting conversation? Share this conversation for people to see it in real-time and in replay:",
     replayURL
   );
 }
@@ -149,7 +149,7 @@ socket.on("connect", () => {
 });
 
 socket.on("replayId", (replayId) => {
-  replayURL = window.location.origin + "/chan?r=" + replayId;
+  replayURL = window.location.href + "?r=" + replayId;
 });
 
 socket.on("state", (state) => {
