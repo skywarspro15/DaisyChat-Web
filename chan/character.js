@@ -1,6 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { GLTFLoader } from "https://unpkg.com/three@0.127.0/examples/jsm/loaders/GLTFLoader";
-import { OrbitControls } from "https://unpkg.com/three@0.127.0/examples/jsm/controls/OrbitControls.js";
 import { VRMLoaderPlugin, VRMUtils } from "./three-vrm.module.js";
 
 // renderer
@@ -8,6 +7,7 @@ const loadStatus = document.getElementById("loadStatus");
 const progressBar = document.getElementById("progressBar");
 const canvas = document.getElementById("charCanvas");
 const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.shadowMap.enabled = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth - 20, window.innerHeight - 20);
 
@@ -22,18 +22,50 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0.0, 1.0, 2);
 
-// camera controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.screenSpacePanning = true;
-controls.target.set(0.0, 1.0, 0.0);
-controls.update();
-
 // scene
 const scene = new THREE.Scene();
-
 // light
-const light = new THREE.DirectionalLight(0xffffff);
+async function getLightColor() {
+  let night = 0x4a72f5;
+  let rise = 0xc38631;
+  let set = 0xb26b0f;
+  let day = 0x9eaee2;
+  let lat = 34.6937569;
+  let lng = 135.5014539;
+
+  // Get sunrise and sunset times from API
+  let response = await fetch(
+    `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`
+  );
+  let data = await response.json();
+  let sunrise = new Date(data.results.sunrise);
+  let sunset = new Date(data.results.sunset);
+
+  // Calculate current time and color
+  let now = new Date();
+  let color;
+  if (now < sunrise || now > sunset) {
+    console.log("night");
+    color = night;
+  } else if (now < sunset) {
+    if (now < sunrise.getTime() + (sunset.getTime() - sunrise.getTime()) / 2) {
+      console.log("sunrise");
+      color = rise;
+    } else {
+      console.log("day");
+      color = day;
+    }
+  } else {
+    console.log("sunset");
+    color = set;
+  }
+
+  return color;
+}
+let color = await getLightColor();
+const light = new THREE.DirectionalLight(color);
 light.position.set(1.0, 1.0, 1.0).normalize();
+light.castShadow = true;
 scene.add(light);
 
 // gltf and vrm
@@ -43,7 +75,10 @@ let currentMixer = undefined;
 let armL = -1;
 let armR = 1;
 let prevProg = 0;
+let totalProg = 0;
+let curProgress = 0;
 const loader = new GLTFLoader();
+const roomLoader = new GLTFLoader();
 loader.crossOrigin = "anonymous";
 
 loader.register((parser) => {
@@ -75,29 +110,55 @@ loader.load(
     currentVrm.humanoid.getNormalizedBoneNode("rightUpperArm").rotation.z =
       armR;
     currentVrm.humanoid.getNormalizedBoneNode("hips").position.set(0, 0.5, 0.0);
-    const params = new URLSearchParams(window.location.search);
-    let extScript = document.createElement("script");
-    if (!params.has("r")) {
-      extScript.setAttribute("src", "ai.js");
-      extScript.setAttribute("type", "module");
-    } else {
-      extScript.setAttribute("src", "replay.js");
-      extScript.setAttribute("type", "module");
-    }
-    document.body.appendChild(extScript);
-    blink(currentVrm);
+    roomLoader.load(
+      // resource URL
+      "models/room.glb",
+      // called when the resource is loaded
+      (gltf) => {
+        scene.add(gltf.scene);
+        gltf.scene.position.x = 0.6;
+        gltf.scene.position.y = 0.2;
+        const params = new URLSearchParams(window.location.search);
+        let extScript = document.createElement("script");
+        if (!params.has("r")) {
+          extScript.setAttribute("src", "ai.js");
+          extScript.setAttribute("type", "module");
+        } else {
+          extScript.setAttribute("src", "replay.js");
+          extScript.setAttribute("type", "module");
+        }
+        document.body.appendChild(extScript);
+        blink(currentVrm);
+      },
+      // called while loading is progressing
+      (xhr) => {
+        prevProg = totalProg;
+        totalProg = prevProg + (xhr.loaded / xhr.total) * 100;
+        anime({
+          targets: "#progressBar",
+          value: [prevProg, totalProg],
+          easing: "easeInOutCubic",
+        });
+        prevProg = totalProg;
+      },
+      // called when loading has errors
+      (error) => {
+        console.error(error);
+        loadStatus.innerText = error;
+      }
+    );
   },
 
   // called while loading is progressing
   (progress) => {
-    let curProgress = 100.0 * (progress.loaded / progress.total);
+    totalProg = 100.0 * (progress.loaded / progress.total);
     console.log("Loading model...", curProgress, "%");
     anime({
       targets: "#progressBar",
-      value: [prevProg, curProgress],
+      value: [prevProg, totalProg],
       easing: "easeInOutCubic",
     });
-    prevProg = curProgress;
+    prevProg = totalProg;
   },
 
   // called when loading has errors

@@ -107,6 +107,8 @@ socket.on("update", (data) => {
     uInput.value = data["content"];
   }
   if (data["type"] == "end") {
-    alert("Conversation ended");
+    alert(
+      "Conversation ended. Thanks for tuning in! Refresh this page to watch the replay."
+    );
   }
 });
